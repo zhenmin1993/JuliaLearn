@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 mutable struct Generator
     name::String
     #g_max::Float64
@@ -39,4 +40,21 @@ end
 function clear(operator::MarketOperator)
 
 
+=======
+abstract type Agent end
+mutable struct Generator <:Agent
+    Profit <: Number
+    #FixedCost <: Number
+    #VariableCost <:Number
+    #Revenue <: Number
+    #Dispatch <: Number
+end
+
+mutable struct Consumer <:Agent
+    VoLL <: Number
+    Demand <: Number
+end
+
+function Trade(GeneratorGroup::Array{Generator},ConsumerGroup::Array{Consumer})
+>>>>>>> 3309b413bb6c88d924bd70c81c45a8d4abcbc4ab
 end
