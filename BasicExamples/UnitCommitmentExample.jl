@@ -1,3 +1,4 @@
+
 # In this cell we introduce binary decision u to the economic dispatch problem (function solve_ed)
 function solve_uc(g_max, g_min, c_g, w_f, c_w, d)
     #Define the unit commitment (UC) model

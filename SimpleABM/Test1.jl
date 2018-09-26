@@ -1,8 +1,8 @@
-import PyPlot
-x = linspace(0, 10, 200)
-z = linspace(0, 10, 200)
-q = cos.(z)
-y = sin.(x)
+using ReinforcementLearning, ReinforcementLearningEnvironmentDiscrete
 
-PyPlot.plot(x, y, "b-", linewidth=2)
-PyPlot.plot(z, q, "b-", linewidth=2)
+learner = QLearning()
+env = MDP()
+stop = ConstantNumberSteps(10^3)
+x = RLSetup(learner, env, stop, callbacks = [TotalReward()])
+learn!(x)
+println(getvalue(x.callbacks[1]))
