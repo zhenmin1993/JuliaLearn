@@ -5,10 +5,15 @@ abstract type DispatchHistory{T} <: History{T} end
 
 
 
-mutable struct GeneratorHistory{Float64} <: BiddingHistory{Float64}
-    amount_history::Vector{Float64}
-    price_history::Vector{Float64}
+mutable struct GeneratorHistory
+    offer_quantity_history::Vector{Float64}
+    offer_price_history::Vector{Float64}
+    price_estimation_history::Vector{Float64}
     profit_history::Vector{Float64}
+    clear_price_history::Vector{Float64}
+    real_quantity_history::Vector{Float64}
+    quantity_decision_history::Vector{Int8}
+    price_decision_history::Vector{Int8}
 end
 mutable struct Generator
     name::String
@@ -18,14 +23,16 @@ mutable struct Generator
     #variable_cost::Float64
     marginal_cost::Float64
     offer_price::Float64
-    offer_amount::Float64
+    offer_quantity::Float64
     profit::Float64
+    price_decision::Int8
+    quantity_decision::Int8
     history::GeneratorHistory
 end
 
 
 mutable struct ConsumerHistory{Float64} <: BiddingHistory{Float64}
-    amount_history::Vector{Float64}
+    quantity_history::Vector{Float64}
     price_history::Vector{Float64}
     value_history::Vector{Float64}
 end
@@ -38,20 +45,23 @@ end
 
 
 
-
-mutable struct HoldingCompnayHistory{Generator} <:DispatchHistory{Generator}
-    dispatch_history::Vector{Vector{Generator}}
+mutable struct GeneratorPortfolio
+    generators_included::Vector{Generator}
+end
+mutable struct HoldingCompanyHistory
+    dispatch_history::Array{Generator}
     profit_history::Vector{Float64}
+    clear_price_history::Vector{Float64}
+    max_dispatch_price_history::Vector{Float64}
 end
-mutable struct HoldingCompany{Generator,Consumer,HoldingCompanyHistory}
+mutable struct HoldingCompany
     name::String
-    generator_portfolio::Vector{Generator}
+    generator_portfolio::GeneratorPortfolio
     allconsumers::Vector{Consumer}
-    dispatch_history::HoldingCompanyHistory
-
+    history::HoldingCompanyHistory
 end
 
-mutable struct ConsumerGroup{Consumer}
+mutable struct ConsumerGroup
     allconsumers::Vector{Consumer}
     total_consumption::Float64
 end
