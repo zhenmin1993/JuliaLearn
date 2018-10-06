@@ -47,17 +47,23 @@ end
 
 mutable struct GeneratorPortfolio
     generators_included::Vector{Generator}
+    total_generator_num::Int8
 end
 mutable struct HoldingCompanyHistory
     dispatch_history::Array{Generator}
     profit_history::Vector{Float64}
     clear_price_history::Vector{Float64}
     max_dispatch_price_history::Vector{Float64}
+    min_dispatch_price_history::Vector{Float64}
+    price_decision::Vector{Int8}
+    quantity_decision::Vector{Int8}
 end
 mutable struct HoldingCompany
     name::String
     generator_portfolio::GeneratorPortfolio
     allconsumers::Vector{Consumer}
+    price_decision::Int8
+    quantity_decision::Float64
     history::HoldingCompanyHistory
 end
 

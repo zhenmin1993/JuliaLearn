@@ -24,14 +24,16 @@ function RunSimulation(MO::MarketOperator, HDCPY::HoldingCompany, total_round)
     for round in 1:total_round
         clear_price = clear(MO)
         update!(HDCPY, clear_price)
-        for generator in HDCPY.generator_portfolio.generators_included
-            PriceDecision!(generator)
-            QuantityDecision!(generator)
+        PriceDecision!(HDCPY)
+        for generator_num in HDCPY.generator_portfolio.total_generator_num:1
+            this_generator = HDCPY.generator_portfolio.generators_included[generator_num]
+
+
             if round > 1 && round % 50==0
-                println("The real quantity of generator ", generator.name, "  ",generator.history.real_quantity_history[end])
-                println("The offer quantity of generator ", generator.name, "  " ,generator.history.offer_quantity_history[end-1])
-                println("The clear price ", generator.name, "  ",generator.history.clear_price_history[end])
-                println("The offer price of generator ", generator.name, "  " ,generator.history.offer_price_history[end-1])
+                println("The real quantity of generator ", this_generator.name, "  ",this_generator.history.real_quantity_history[end])
+                #println("The offer quantity of generator ", generator.name, "  " ,generator.history.offer_quantity_history[end-1])
+                println("The clear price ", this_generator.name, "  ",this_generator.history.clear_price_history[end])
+                println("The offer price of generator ", this_generator.name, "  " ,this_generator.history.offer_price_history[end-1])
             end
         end
         println("This is round: ", round)

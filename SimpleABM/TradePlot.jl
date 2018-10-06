@@ -15,9 +15,6 @@ function PlotTrade(operator::MarketOperator)
         push!(marginal_cost_all, allgenerators[generator_num].marginal_cost)
         push!(cumulative_offer_quantity_all, allgenerators[generator_num].offer_quantity + cumulative_offer_quantity_all[end,])
     end
-    push!(offer_price_all, 200.0)
-    push!(cumulative_offer_quantity_all, cumulative_offer_quantity_all[end,])
-    push!(marginal_cost_all, allgenerators[end].marginal_cost)
 
     PyPlot.figure(1)
     PyPlot.step(cumulative_bid_quantity_all, bid_price_all)

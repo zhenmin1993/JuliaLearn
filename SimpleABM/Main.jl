@@ -31,14 +31,15 @@ println(ThisConsumerGroup.total_consumption)
 
 init_generator_history = GeneratorHistory([],[],[],[],[],[],[],[])
 #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€), price decision,quantity decision, history
-generator1 = Generator("Gen1",10,60,20,30,30,0,1,1, deepcopy(init_generator_history))
-#generator2 = Generator("Gen2",0,0,30,50,30,0,1,-1, deepcopy(init_generator_history)) #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€)
-#generator3 = Generator("Gen3",0,0,60,80,40,0,1,1, deepcopy(init_generator_history)) #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€)
-#Generators = [generator1,generator2,generator3]
-Generators = [generator1]
-ThisGeneratorPortfolio = GeneratorPortfolio(Generators)
-init_holding_history = HoldingCompanyHistory([],[],[],[])
-ThisHoldingCompany = HoldingCompany("Firm1",ThisGeneratorPortfolio,Consumers,deepcopy(init_holding_history))
+generator1 = Generator("Gen1",10,20,20,30,15,0,1,1, deepcopy(init_generator_history))
+generator2 = Generator("Gen2",5,15,30,50,10,0,1,1, deepcopy(init_generator_history)) #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€)
+generator3 = Generator("Gen3",15,30,60,80,20,0,1,1, deepcopy(init_generator_history)) #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€)
+VirtualGenerator =  Generator("Virtual",0,0,200,200,0,0,0,0, deepcopy(init_generator_history))
+Generators = [generator1,generator2,generator3,VirtualGenerator]
+#Generators = [generator1]
+ThisGeneratorPortfolio = GeneratorPortfolio(Generators, length(Generators)-1)
+init_holding_history = HoldingCompanyHistory([],[],[],[],[],[],[])
+ThisHoldingCompany = HoldingCompany("Firm1",ThisGeneratorPortfolio,Consumers,1,1,deepcopy(init_holding_history))
 
 ThisMarketOperator = MarketOperator("MO",ThisHoldingCompany.generator_portfolio.generators_included,Consumers)
 
