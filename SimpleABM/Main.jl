@@ -31,11 +31,18 @@ println(ThisConsumerGroup.total_consumption)
 
 init_generator_history = GeneratorHistory([],[],[],[],[],[],[],[])
 #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€), price decision,quantity decision, history
-generator1 = Generator("Gen1",10,20,20,30,15,0,1,1, deepcopy(init_generator_history))
-generator2 = Generator("Gen2",5,15,30,50,10,0,1,1, deepcopy(init_generator_history)) #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€)
-generator3 = Generator("Gen3",15,30,60,80,20,0,1,1, deepcopy(init_generator_history)) #name, g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€)
+generator1 = Generator("Gen1",0,10,10,13,5,0,1,1, deepcopy(init_generator_history))
+generator2 = Generator("Gen2",0,8,12,15,6,0,1,1, deepcopy(init_generator_history))
+generator3 = Generator("Gen3",2,8,15,28,5,0,1,1, deepcopy(init_generator_history))
+generator4 = Generator("Gen4",5,8,20,25,7,0,1,1, deepcopy(init_generator_history))
+generator5 = Generator("Gen5",3,9,25,28,8,0,1,1, deepcopy(init_generator_history))
+generator6 = Generator("Gen6",2,6,27,30,5,0,1,1, deepcopy(init_generator_history))
+generator7 = Generator("Gen7",1,5,28,30,4,0,1,1, deepcopy(init_generator_history))
+generator8 = Generator("Gen8",0,3,30,31,2,0,1,1, deepcopy(init_generator_history))
+generator9 = Generator("Gen9",2,4,32,35,3,0,1,1, deepcopy(init_generator_history))
+generator10 = Generator("Gen10",1,5,33,36,4,0,1,1, deepcopy(init_generator_history))
 VirtualGenerator =  Generator("Virtual",0,0,200,200,0,0,0,0, deepcopy(init_generator_history))
-Generators = [generator1,generator2,generator3,VirtualGenerator]
+Generators = [generator1,generator2,generator3,generator4,generator5,generator6,generator7,generator8,generator9,generator10,VirtualGenerator]
 #Generators = [generator1]
 ThisGeneratorPortfolio = GeneratorPortfolio(Generators, length(Generators)-1)
 init_holding_history = HoldingCompanyHistory([],[],[],[],[],[],[])
@@ -58,16 +65,22 @@ ThisMarketOperator = MarketOperator("MO",ThisHoldingCompany.generator_portfolio.
 include("RunSimulation.jl")
 RunSimulation(ThisMarketOperator,ThisHoldingCompany,5000)
 
-PyPlot.figure(2)
+figure = 2
+PyPlot.figure(figure)
 PyPlot.plot(ThisHoldingCompany.history.profit_history)
-PyPlot.figure(3)
-PyPlot.plot(ThisHoldingCompany.generator_portfolio.generators_included[1].history.offer_quantity_history)
 
-PyPlot.figure(4)
-PyPlot.plot(ThisHoldingCompany.generator_portfolio.generators_included[1].history.quantity_decision_history)
+#figure += 1
+#PyPlot.figure(figure)
+#PyPlot.plot(ThisHoldingCompany.generator_portfolio.generators_included[1].history.offer_quantity_history)
 
-PyPlot.figure(5)
+#figure += 1
+#PyPlot.figure(4)
+#PyPlot.plot(ThisHoldingCompany.generator_portfolio.generators_included[1].history.quantity_decision_history)
+
+figure += 1
+PyPlot.figure(figure)
 PyPlot.plot(ThisHoldingCompany.generator_portfolio.generators_included[1].history.price_decision_history)
 
-PyPlot.figure(6)
+figure += 1
+PyPlot.figure(figure)
 PyPlot.plot(ThisHoldingCompany.generator_portfolio.generators_included[1].history.clear_price_history)

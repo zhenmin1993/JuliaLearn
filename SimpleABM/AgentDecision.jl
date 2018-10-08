@@ -12,7 +12,7 @@ function AverageProfit(generator::Generator)
 end
 
 function AverageProfit(HDCPY::HoldingCompany)
-    period = 1
+    period = 20
 
     if length(HDCPY.history.profit_history) < (period+1)
         return sum(HDCPY.history.profit_history)/length(HDCPY.history.profit_history)
@@ -87,7 +87,7 @@ end
 function PriceChange!(HDCPY::HoldingCompany)
     decision = HDCPY.price_decision
     #historical_max_profit_gap = abs(maximum(HDCPY.history.profit_history) - HDCPY.history.clear_price_history[end])/maximum(HDCPY.history.profit_history)
-    historical_max_profit_gap = 0.1
+    historical_max_profit_gap = 0.05
     total_gen_num = HDCPY.generator_portfolio.total_generator_num
     for generator_num in reverse(1:total_gen_num)
         this_generator = HDCPY.generator_portfolio.generators_included[generator_num]
