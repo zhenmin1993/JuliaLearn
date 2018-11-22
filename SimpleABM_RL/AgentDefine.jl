@@ -5,6 +5,7 @@ abstract type DispatchHistory{T} <: History{T} end
 
 
 
+
 mutable struct GeneratorHistory
     offer_quantity_history::Vector{Float64}
     offer_price_history::Vector{Float64}
