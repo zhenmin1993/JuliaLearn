@@ -4,7 +4,28 @@ abstract type BiddingHistory{T} <: History{T} end
 abstract type DispatchHistory{T} <: History{T} end
 
 
+struct Action
+    action::Tuple{Int8,Int8} #price, quantity
+end
 
+mutable struct State
+    agentPosition::Int8 #position = 1,0,-1 => totally in money, marginal, out of money
+    offer_price::Float64
+    offer_quantity::Float64
+    market_price::Float64
+    profit::Float64
+end
+
+mutable struct StateActionPairs
+    state::State
+    actionSpace::Vector{Action}
+    Q_list::Vector{Float64}
+    actionCount::Vector{Int64}
+end
+
+mutable struct QBuffer
+    buffer::Vector{StateActionPairs}
+end
 
 mutable struct GeneratorHistory
     offer_quantity_history::Vector{Float64}
@@ -13,8 +34,7 @@ mutable struct GeneratorHistory
     profit_history::Vector{Float64}
     clear_price_history::Vector{Float64}
     real_quantity_history::Vector{Float64}
-    quantity_decision_history::Vector{Int8}
-    price_decision_history::Vector{Int8}
+    decision_history::Vector{Action}
 end
 mutable struct Generator
     name::String
@@ -27,8 +47,7 @@ mutable struct Generator
     offer_price::Float64
     offer_quantity::Float64
     profit::Float64
-    price_decision::Int8
-    quantity_decision::Int8
+    decision::Action
     history::GeneratorHistory
 end
 
@@ -52,20 +71,20 @@ mutable struct GeneratorPortfolio
     total_generator_num::Int8
 end
 mutable struct HoldingCompanyHistory
-    dispatch_history::Array{Generator}
+    dispatch_history::Vector{Generator}
     profit_history::Vector{Float64}
     clear_price_history::Vector{Float64}
     max_dispatch_price_history::Vector{Float64}
     min_dispatch_price_history::Vector{Float64}
-    price_decision_history::Vector{Int8}
-    quantity_decision_history::Vector{Int8}
+    decision_history::Vector{Action}
+    qbuffer::QBuffer
 end
 mutable struct HoldingCompany
     name::String
     generator_portfolio::GeneratorPortfolio
     allconsumers::Vector{Consumer}
-    price_decision::Int8
-    quantity_decision::Float64
+    decision::Action
+    previous_state::State
     history::HoldingCompanyHistory
 end
 

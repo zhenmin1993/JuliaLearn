@@ -40,7 +40,7 @@ function clear(MO::MarketOperator)
                 push!(allgenerators[generator_num-1].history.real_quantity_history, total_consumed_quantity_this_generator - residual)
                 break
             end
-            println("Now Clean: ",generator_num)
+            #println("Now Clean: ",generator_num)
             total_consumed_quantity_this_generator = 0
             all_quantity[generator_num] += -residual
             total_consumed_quantity_this_generator += residual

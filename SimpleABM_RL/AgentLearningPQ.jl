@@ -17,15 +17,22 @@ end
 
 
 
-actionSpace = Vector{Action}(0)
-for a in collect(Iterators.product(-1:1, -1:1))
-    push!(actionSpace, Action(a))
+
+function GenerateActionSpaceQTable(priceCap::Float64, priceFloor::Float64, quantityCap::Float64, quantityFloor::Float64)
+    actionSpace = Vector{Action}(0)
+    priceStep = round((priceCap - priceFloor)/10)
+    quantityStep = round((quantityCap - quantityFloor)/10)
+    for a in collect(Iterators.product(priceFloor:priceStep:priceCap, quantityFloor:quantityStep:quantityCap))
+        push!(actionSpace, Action(a))
+    end
+    initial_Q_list = zeros(length(actionSpace))
+    initial_actionCount = Vector{Int64}(0)
+    for a in 1:length(actionSpace)
+        push!(initial_actionCount, Int64(1))
+    end
+    return actionSpace,initial_Q_list,initial_actionCount
 end
-initial_Q_list = zeros(length(actionSpace))
-initial_actionCount = Vector{Int64}(0)
-for a in 1:length(actionSpace)
-    push!(initial_actionCount, Int64(1))
-end
+
 
 
 

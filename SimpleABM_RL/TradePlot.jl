@@ -9,7 +9,7 @@ function GetAllNames(generators::Vector{Generator})
 end
 
 
-function PlotTrade(operator::MarketOperator, final::Bool)
+function PlotTrade(operator::MarketOperator, final::Bool, figure_num::Int64, episodeTitle::String)
     allgenerators,allconsumers = sortbybid!(operator)
     allowners, alltechnames = GetAllNames(allgenerators)
     offer_price_all = [allgenerators[1].offer_price]
@@ -28,19 +28,19 @@ function PlotTrade(operator::MarketOperator, final::Bool)
         push!(cumulative_offer_quantity_all, allgenerators[generator_num].offer_quantity + cumulative_offer_quantity_all[end,])
     end
 
-    PyPlot.figure(1)
+    PyPlot.figure(figure_num)
     PyPlot.step(cumulative_bid_quantity_all, bid_price_all)
     PyPlot.step(cumulative_offer_quantity_all, offer_price_all, linestyle="-")
     PyPlot.step(cumulative_offer_quantity_all, marginal_cost_all, linestyle=":")
-
+    PyPlot.title(episodeTitle)
     PyPlot.xlabel("Quantity[MWh]")
     PyPlot.ylabel("Price[€/MWh]")
     if final
-        PyPlot.figure(2)
+        PyPlot.figure(figure_num+1)
         PyPlot.step(cumulative_bid_quantity_all, bid_price_all)
         PyPlot.step(cumulative_offer_quantity_all, offer_price_all, linestyle="-")
         PyPlot.step(cumulative_offer_quantity_all, marginal_cost_all, linestyle=":")
-
+        PyPlot.title(episodeTitle)
         PyPlot.xlabel("Quantity[MWh]")
         PyPlot.ylabel("Price[€/MWh]")
         for txt_owner in zip(cumulative_offer_quantity_all, marginal_cost_all, allowners)

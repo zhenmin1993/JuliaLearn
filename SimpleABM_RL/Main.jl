@@ -1,6 +1,8 @@
 import PyPlot
 
 include("AgentDefine.jl")
+include("AgentLearning.jl")
+
 include("MarketClearing.jl")
 include("TradePlot.jl")
 include("OfferOptimize.jl")
@@ -32,34 +34,30 @@ end
 CalculateTotalConsumption(ThisConsumerGroup)
 println(ThisConsumerGroup.total_consumption)
 
-init_generator_history = GeneratorHistory([],[],[],[],[],[],[],[])
-init_holding_history = HoldingCompanyHistory([],[],[],[],[],[],[])
-VirtualGenerator =  Generator("Virtual","Init",0,0,200,200,0,0,0,0, deepcopy(init_generator_history))
+init_decision = Action((0,0))
+init_State = State(0,0,0,0,0)
+init_Q_buffer = QBuffer(Vector{StateActionPairs}(0))
+init_generator_history = GeneratorHistory(Vector{Float64}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Action}(0))
+init_holding_history = HoldingCompanyHistory(Vector{Generator}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Float64}(0),Vector{Action}(0),deepcopy(init_Q_buffer))
+VirtualGenerator =  Generator("Virtual","Init",0,0,200,200,0,0,init_decision, deepcopy(init_generator_history))
 init_generator_portfolio = GeneratorPortfolio([VirtualGenerator], 0)
-init_holding_company = HoldingCompany("Init",init_generator_portfolio,Consumers,1,1,deepcopy(init_holding_history))
-#name, owner,g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€), price decision,quantity decision, history
-generator1 = Generator("Gen1","Init",0,5,5,5,3,0,1,1, deepcopy(init_generator_history))
-generator2 = Generator("Gen2","Init",0,8,8,8,5,0,-1,1, deepcopy(init_generator_history))
-generator3 = Generator("Gen3","Init",2,8,9,9,4,0,-1,1, deepcopy(init_generator_history))
-generator4 = Generator("Gen4","Init",5,8,10,10,6,0,1,1, deepcopy(init_generator_history))
-generator5 = Generator("Gen5","Init",3,9,12,12,5,0,-1,1, deepcopy(init_generator_history))
-generator6 = Generator("Gen6","Init",2,6,15,15,3,0,1,1, deepcopy(init_generator_history))
-generator7 = Generator("Gen7","Init",1,5,18,18,2,0,-1,1, deepcopy(init_generator_history))
-generator8 = Generator("Gen8","Init",0,3,20,20,2,0,1,1, deepcopy(init_generator_history))
-generator9 = Generator("Gen9","Init",2,4,23,23,2,0,-1,1, deepcopy(init_generator_history))
-generator10 = Generator("Gen10","Init",1,5,26,26,3,0,1,1, deepcopy(init_generator_history))
-generator11 = Generator("Gen11","Init",0,15,30,30,8,0,-1,1, deepcopy(init_generator_history))
-generator12 = Generator("Gen12","Init",2,10,31,31,4,0,1,1, deepcopy(init_generator_history))
-generator13 = Generator("Gen13","Init",5,20,32,32,9,0,-1,1, deepcopy(init_generator_history))
-generator14 = Generator("Gen14","Init",1,15,35,35,11,0,1,1, deepcopy(init_generator_history))
-generator15 = Generator("Gen15","Init",2,10,38,38,6,0,-1,1, deepcopy(init_generator_history))
-AllTechnologies_competitive = [generator1,generator2,generator3,generator4,generator5,generator6,generator7,generator8,generator9,generator10,generator11,generator12,generator13,generator14,generator15]
+init_holding_company = HoldingCompany("Init",init_generator_portfolio,Consumers,init_decision,init_State,deepcopy(init_holding_history))
 
-generator_monopoly = Generator("Gen_mono","Init",0,60,20,20,60,0,1,1, deepcopy(init_generator_history))
+AllTechnologies_competitive = Vector{Generator}(0)
+
+for gen_num in 1:length(g_min)
+    gen_name = string("Gen", string(gen_num))
+    #name, owner,g_min(MWh), g_max(MWh), marginal_cost(€/MWh), offer_price(€/MWh), offer_quantity(MWh), profit(€), price decision,quantity decision, history
+    push!(AllTechnologies_competitive, Generator(gen_name, "Init", g_min[gen_num], g_max[gen_num], marginal_cost[gen_num],marginal_cost[gen_num], g_max[gen_num],0,init_decision, deepcopy(init_generator_history)))
+end
+
+#AllTechnologies_competitive = [generator1,generator2,generator3,generator4,generator5,generator6,generator7,generator8,generator9,generator10,generator11,generator12,generator13,generator14,generator15]
+
+generator_monopoly = Generator("Gen_mono","Init",0,60,20,20,60,0,init_decision, deepcopy(init_generator_history))
 AllTechnologies_monopoly = [generator_monopoly]
 
-generator_oligopoly_1 = Generator("Gen_olig_1","Init",0,25,10,10,25,0,1,1, deepcopy(init_generator_history))
-generator_oligopoly_2 = Generator("Gen_olig_2","Init",0,25,10,10,25,0,-1,1, deepcopy(init_generator_history))
+generator_oligopoly_1 = Generator("Gen_olig_1","Init",0,25,10,10,25,0,init_decision, deepcopy(init_generator_history))
+generator_oligopoly_2 = Generator("Gen_olig_2","Init",0,25,10,10,25,0,init_decision, deepcopy(init_generator_history))
 AllTechnologies_oligopoly = [generator_oligopoly_1,generator_oligopoly_2]
 
 
@@ -82,7 +80,7 @@ if case == "Monopoly"
     HoldingCompanies = Vector{HoldingCompany}(0)
     for company_num in 1:total_company_num
         company_name = string("Firm", string(company_num))
-        ThisHoldingCompany = HoldingCompany(company_name,deepcopy(init_generator_portfolio),Consumers,1,1,deepcopy(init_holding_history))
+        ThisHoldingCompany = HoldingCompany(company_name,deepcopy(init_generator_portfolio),Consumers,init_decision,init_State,deepcopy(init_holding_history))
         push!(HoldingCompanies, ThisHoldingCompany)
     end
 
@@ -101,7 +99,7 @@ if case == "Oligopoly"
     HoldingCompanies = Vector{HoldingCompany}(0)
     for company_num in 1:total_company_num
         company_name = string("Firm", string(company_num))
-        ThisHoldingCompany = HoldingCompany(company_name,deepcopy(init_generator_portfolio),Consumers,1,1,deepcopy(init_holding_history))
+        ThisHoldingCompany = HoldingCompany(company_name,deepcopy(init_generator_portfolio),Consumers,init_decision,init_State,deepcopy(init_holding_history))
         push!(HoldingCompanies, ThisHoldingCompany)
     end
 
@@ -150,7 +148,8 @@ ThisMarketOperator = MarketOperator("MO",HoldingCompanies,Consumers)
 #PlotTrade(ThisMarketOperator)
 
 include("RunSimulation.jl")
-RunSimulation(ThisMarketOperator,HoldingCompanies,4000)
+ExplorationSimulation(ThisMarketOperator,HoldingCompanies,8000)
+RealSimulation(ThisMarketOperator,HoldingCompanies,1000,8000)
 
 if case == "Monopoly"
     status, quantity, price = OptimizeBidding(HoldingCompanies[1], ThisConsumerGroup)
